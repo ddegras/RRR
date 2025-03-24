@@ -1,6 +1,10 @@
 # R package RRR: Reduced Rank Ridge Regression
 
-Multivariate regression techniques: reduced rank, ridge, partial least squares, principal component regression) and utility functions: model simulation, tuning parameter selection by cross-validation.
+This R package provides functions to: 
+-   perform multivariate regression on data: reduced rank (RR), ridge, partial least squares (PLS), principal component regression(PCR) 
+-   simulate multivariate regression models (RR, PLS, PCR)
+-   select tuning parameters by cross-validation
+
 To install the package: 
 ```
 library(devtools)
