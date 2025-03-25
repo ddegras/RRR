@@ -88,7 +88,7 @@ if ("rrr" %in% method) {
 	pars$rrr <- c(lambda = lambda[idx1[1]], r = r[idx1[2]])
 }
 if ("rr" %in% method) pars$rr <- c(r = r[idx["rr"]])
-if ("ridge" %in% method) pars$mvr <- c(lambda = lambda[idx["ridge"]])
+if ("ridge" %in% method) pars$ridge <- c(lambda = lambda[idx["ridge"]])
 if ("pls" %in% method) pars$pls <- c(r = r[idx["pls"]])
 if ("pcr" %in% method) pars$pcr <- c(r = rpcr[idx["pcr"]])
 
