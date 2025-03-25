@@ -33,5 +33,14 @@ for (l in 1:nlambda) {
 	fitted[,,l] <- svdx$u %*% (uty * (d*scl))
 }
 
+if (nlambda == 1) {
+	dim(coeffs) <- c(p, q)
+	dim(fitted) <- c(n, q)
+} else {
+	dimnames(coeffs) <- list(pred = NULL, resp = NULL, lambda = lambda)
+	dimnames(fitted) <- list(case = NULL, resp = NULL, lambda = lambda)	
+}
+
+
 list(coef = coeffs, fitted = fitted, lambda = lambda)	
 }
