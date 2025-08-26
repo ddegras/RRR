@@ -32,21 +32,23 @@ if (is.null(svdx)) svdx <- svd(x, rmax, rmax)
 rankx <- sum(svdx$d >= svdx$d[1] * 1e-8) # ensure good conditioning of x
 	
 ## PC Regression
-coeffs <- array(dim = c(p, q, nr))
-fitted <- array(dim = c(n, q, nr))
+coeffs <- array(dim = c(p, q, nr), 
+	dimnames = list(pred = NULL, resp = NULL, r = r))
+fitted <- array(dim = c(n, q, nr),
+	dimnames = list(case = NULL, resp = NULL, r = r))
 for (i in 1:nr) {
 	ri <- min(r[i], rankx)
 	uty <- crossprod(svdx$u[,1:ri], y)
 	coeffs[,,i] <- svdx$v[,1:ri] %*% (uty / svdx$d[1:ri])
 	fitted[,,i] <- svdx$u[,1:ri] %*% uty
 }
-if (nr == 1) { 
-	dim(coeffs) <- c(p, q)
-	dim(fitted) <- c(n, q)
-} else {
-	dimnames(coeffs) <- list(pred = NULL, resp = NULL, r = r)
-	dimnames(fitted) <- list(case = NULL, resp = NULL, r = r)	
-}
+# if (nr == 1) { 
+	# dim(coeffs) <- c(p, q)
+	# dim(fitted) <- c(n, q)
+# } else {
+	# dimnames(coeffs) <- list(pred = NULL, resp = NULL, r = r)
+	# dimnames(fitted) <- list(case = NULL, resp = NULL, r = r)	
+# }
 
 list(coef = coeffs, fitted = fitted, r = r)	
 }
