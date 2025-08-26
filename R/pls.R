@@ -21,8 +21,10 @@ rmax <- max(r)
 pp <- w <- matrix(0, ncol(x), rmax)
 cc <- matrix(0, ncol(y), rmax)
 b <- numeric(rmax)
-coeffs <- array(dim = c(p, q, nr))
-fitted <- array(dim = c(n, q, nr))
+coeffs <- array(dim = c(p, q, nr), 
+	dimnames = list(pred = NULL, resp = NULL, r = r))
+fitted <- array(dim = c(n, q, nr),
+	dimnames = list(case = NULL, resp = NULL, r = r)	)
 y0 <- y
 count <- 0
 for (i in 1:rmax) {
@@ -67,14 +69,13 @@ for (i in 1:nr) {
 	coeffs[,,i] <- bb
 }
 
-if (nr == 1) {
-	dim(coeffs) <- c(p, q)
-	dim(fitted) <- c(n, q) 
-} else {
-	dimnames(coeffs) <- list(pred = NULL, resp = NULL, r = r)
-	dimnames(fitted) <- list(case = NULL, resp = NULL, r = r)	
-	
-}
+# if (nr == 1) {
+	# dim(coeffs) <- c(p, q)
+	# dim(fitted) <- c(n, q) 
+# } else {
+	# dimnames(coeffs) <- list(pred = NULL, resp = NULL, r = r)
+	# dimnames(fitted) <- list(case = NULL, resp = NULL, r = r)		
+# }
 
 list(coef = coeffs, fitted = fitted, r = r)	
 }
