@@ -42,13 +42,14 @@ for (l in 1:nlambda) {
 	scl[is.nan(scl)] <- 0
 	bridge <- svdx$v %*% (scl * uty)
 	yridge <- svdx$u %*% ((d * scl) * uty)
-	yrext <- if (lambda[l] == 0) yridge else rbind(yridge, bridge)
+	mat <- (d / sqrt(d2 + lambda[l])) * uty
+	# mat <- if (lambda[l] == 0) yridge else rbind(yridge, bridge)
 	v <- tryCatch(
-				suppressWarnings(svds(yrext, rmax, nu = 0)$v),
-				error = function(e) svd(yrext, 0, rmax)$v)
+				suppressWarnings(svds(mat, rmax, nu = 0)$v),
+				error = function(e) svd(mat, 0, rmax)$v)
 	for (j in 1:nr) {
-		coeffs[,,l,j] <- tcrossprod(bridge %*% v[,1:r[j]], v[,1:r[j]])
-		fitted[,,l,j] <- tcrossprod(yridge %*% v[,1:r[j]], v[,1:r[j]])
+		coeffs[,,l,j] <- tcrossprod(bridge %*% v[,1:r[j]], v[,1:r[j],drop=FALSE])
+		fitted[,,l,j] <- tcrossprod(yridge %*% v[,1:r[j]], v[,1:r[j],drop=FALSE])
 	}	
 }
 
