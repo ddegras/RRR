@@ -1,2 +1,13 @@
-export("kcv", "pcr", "pls", "ridge", "rr", "rrr", "simulate.pcr.model", "simulate.pls.model",
-       "simulate.rr.model", "standardize")
+export(
+"cv.ridge", 
+"kcv",
+"pcr", 
+"pls", 
+"ridge", 
+"rr", 
+"rrr", 
+"simulate.pcr.model", 
+"simulate.pls.model",
+"simulate.rr.model", 
+"standardize"
+)
