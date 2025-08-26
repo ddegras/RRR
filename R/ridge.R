@@ -9,11 +9,10 @@ n <- nrow(x)
 p <- ncol(x)
 q <- ncol(y)
 
-coeffs <- array(dim = c(p, q, nlambda))
-fitted <- array(dim = c(n, q, nlambda))
-dimnames(coeffs) <- list(pred = NULL, resp = NULL, lambda = NULL)
-dimnames(fitted) <- list(case = NULL, resp = NULL, lambda = NULL)	
-
+coeffs <- array(dim = c(p, q, nlambda),
+	dimnames = list(pred = NULL, resp = NULL, lambda = NULL))
+fitted <- array(dim = c(n, q, nlambda), 
+	dimnames = list(case = NULL, resp = NULL, lambda = NULL)	)
 svdx <- svd(x)
 d <- svdx$d
 d2 <- d^2
@@ -30,10 +29,10 @@ for (l in 1:nlambda) {
 	fitted[,,l] <- svdx$u %*% (uty * (d*scl))
 }
 
-if (any(c(p, q, nlambda) == 1))
-	coeffs <- drop(coeffs)
-if (any(c(n, q, nlambda) == 1))
-	fitted <- drop(fitted)
+# if (any(c(p, q, nlambda) == 1))
+	# coeffs <- drop(coeffs)
+# if (any(c(n, q, nlambda) == 1))
+	# fitted <- drop(fitted)
 
 list(coef = coeffs, fitted = fitted, lambda = lambda, 
 	svdx = if (retsvd) svdx else NULL)	
