@@ -1,5 +1,4 @@
-kcv <-
-function(x, y, lambda = NULL, r = NULL, nfolds = 5, 
+kcv <- function(x, y, lambda = NULL, r = NULL, nfolds = 5, 
 	method = c("rrr", "rr", "ridge", "pls", "pcr"), 
 	seed = NULL)
 {
@@ -43,17 +42,18 @@ for (k in 1: nfolds) {
 	train <- which(folds != k)
 	holdout <- which(folds == k)
 	
-	xtrain <- x[train,]
-	ytrain <- y[train,]
-	xout <- x[holdout,]
-	yout <- y[holdout,]
+	xtrain <- x[train,,drop=FALSE]
+	ytrain <- y[train,,drop=FALSE]
+	xout <- x[holdout,,drop=FALSE]
+	yout <- y[holdout,,drop=FALSE]
 	
 	## Fit method to training sample
 	errfun <- function(b) sum((yout - xout %*% b)^2)
 	if ("rrr" %in% method) {
 		b <- rrr(xtrain, ytrain, lambda, r)$coef
-		err[["rrr"]][k,,] <- if (nr == 1 && nlam == 1) {
-			errfun(b) } else apply(b, 3:4, errfun)
+		ndims <- length(dim(b))
+		err[["rrr"]][k,,] <- if (ndims == 2) {
+			errfun(b) } else apply(b, 3:ndims, errfun)
 	}
 	if ("rr" %in% method) {
 		b <- rr(xtrain, ytrain, r)$coef
