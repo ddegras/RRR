@@ -9,8 +9,9 @@ Simulate the models used in Mukherjee and Zhu (2011)
 }
 
 \usage{
-simulate.rr.model(n, p, q, rho, sigma2, model = 1, center = TRUE)
+simulate.rr.model(n, p, q, r, rho, sigma, center = TRUE)
 }
+
 
 \arguments{
   \item{n}{
@@ -21,15 +22,15 @@ number of predictor variables
   \item{q}{
 number of response variables 
 }
+\item{r}{
+	rank of regression matrix
+}
   \item{rho}{
 correlation among predictor variables}
-  \item{sigma2}{
-error variance
+  \item{sigma}{
+error standard deviation
 }
-  \item{model}{
-model number: 1, 2, or 3
-}
-\item{center}{Should the predictors and responses be centered?}
+\item{center}{Should the predictors and responses be centered? Default = TRUE}
 }
 
 \details{
@@ -57,7 +58,7 @@ Ashin Mukherjee and Ji Zhu. \emph{Reduced rank ridge regression and its kernel e
 }
 
 \examples{
-sim <- simulate.rr.model(n = 100, p = 50, q = 20, rho = .5, sigma2 = .25, model = 1)
+sim <- simulate.rr.model(n = 100, p = 50, q = 20, r = 10, rho = .5, sigma = .5)
 x <- sim$x
 y <- sim$y
 b <- sim$b
