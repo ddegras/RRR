@@ -20,14 +20,10 @@ if (is.null(r)) {
 nr <- length(r)
 rmax <- max(r)
 
-## Trivial case
-if (all(x == 0)) {
-	return(list(coeffs = matrix(0, p, q), fitted = matrix(0, n, q), r = 1))
-}
-
-coeffs <- array(dim = c(p, q, nlambda, nr))
-fitted <- array(dim = c(n, q, nlambda, nr))
-
+coeffs <- array(dim = c(p, q, nlambda, nr), 
+	dimnames = list(pred = NULL, resp = NULL, lambda = lambda, r = r))
+fitted <- array(dim = c(n, q, nlambda, nr),
+	dimnames = list(case = NULL, resp = NULL, lambda = lambda, r = r))
 svdx <- svd(x)
 d <- svdx$d
 d2 <- d^2
@@ -43,26 +39,25 @@ for (l in 1:nlambda) {
 	bridge <- svdx$v %*% (scl * uty)
 	yridge <- svdx$u %*% ((d * scl) * uty)
 	mat <- (d / sqrt(d2 + lambda[l])) * uty
-	# mat <- if (lambda[l] == 0) yridge else rbind(yridge, bridge)
 	v <- tryCatch(
 				suppressWarnings(svds(mat, rmax, nu = 0)$v),
 				error = function(e) svd(mat, 0, rmax)$v)
 	for (j in 1:nr) {
-		coeffs[,,l,j] <- tcrossprod(bridge %*% v[,1:r[j]], v[,1:r[j],drop=FALSE])
-		fitted[,,l,j] <- tcrossprod(yridge %*% v[,1:r[j]], v[,1:r[j],drop=FALSE])
+		coeffs[,,l,j] <- tcrossprod(bridge %*% v[,1:r[j]], v[,1:r[j], drop=FALSE])
+		fitted[,,l,j] <- tcrossprod(yridge %*% v[,1:r[j]], v[,1:r[j], drop=FALSE])
 	}	
 }
 
 ## Reduce output dimension if single r value
-keepdim <- c(TRUE, TRUE, nlambda > 1, nr > 1)
-if (any(!keepdim)) {
-	dim(coeffs) <- dim(coeffs)[keepdim]
-	dim(fitted) <- dim(fitted)[keepdim]
-}
-dimnames(coeffs) <- list(pred = NULL, resp = NULL, 
-	lambda = lambda, r = r)[keepdim]
-dimnames(fitted) <- list(case = NULL, resp = NULL, 
-	lambda = lambda, r = r)[keepdim]
+# keepdim <- c(TRUE, TRUE, nlambda > 1, nr > 1)
+# if (any(!keepdim)) {
+	# dim(coeffs) <- dim(coeffs)[keepdim]
+	# dim(fitted) <- dim(fitted)[keepdim]
+# }
+# dimnames(coeffs) <- list(pred = NULL, resp = NULL, 
+	# lambda = lambda, r = r)[keepdim]
+# dimnames(fitted) <- list(case = NULL, resp = NULL, 
+	# lambda = lambda, r = r)[keepdim]
 
 
 list(coef = coeffs, fitted = fitted, lambda = lambda, r = r)	
