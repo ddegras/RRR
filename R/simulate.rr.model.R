@@ -7,7 +7,8 @@ simulate.rr.model <- function(n, p, q, r, rho, sigma, center = TRUE)
     r <- as.integer(r)
     stopifnot(min(n, p, q, r) > 0)
     stopifnot(r <= min(p, q))
-    stopifnot(sigma >= 0)
+    sigma <- rep_len(sigma, p)
+    stopifnot(all(sigma >= 0))
     
     alpha <- sqrt(1 - rho^2)
     x <- matrix(rnorm(n * p, sd = alpha), p, n)
@@ -16,7 +17,8 @@ simulate.rr.model <- function(n, p, q, r, rho, sigma, center = TRUE)
     x <- t(x)
     b <- matrix(rnorm(p * r), p, r)
 	score <- matrix(rnorm(q * r), r, q)
-    y <- (x %*% b) %*% score + rnorm(n * q, sd = sigma)
+	e <- matrix(rnorm(n * q, sd = sigma), n, q, byrow = TRUE)
+    y <- (x %*% b) %*% score + e
     b <- b %*% score
     if (center) {
         x <- sweep(x, 2, colMeans(x), "-")
