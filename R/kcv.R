@@ -51,29 +51,59 @@ for (k in 1: nfolds) {
 	errfun <- function(b) sum((yout - xout %*% b)^2)
 	if ("rrr" %in% method) {
 		b <- rrr(xtrain, ytrain, lambda, r)$coef
-		ndims <- length(dim(b))
-		err[["rrr"]][k,,] <- if (ndims == 2) {
-			errfun(b) } else apply(b, 3:ndims, errfun)
+		# ndims <- length(dim(b))
+		# err[["rrr"]][k,,] <- if (ndims == 2) {
+			# errfun(b) } else apply(b, 3:ndims, errfun)
+		errk <- apply(b, 3:4, errfun)
+		if (nrow(errk) < nr) {
+			nrk <- nrow(errk)
+			errk <- errk[c(1:nrk, rep(nrk, nr - nrk)),, drop = FALSE]
+		}
+		err[["rrr"]][k,,] <- errk
 	}
 	if ("rr" %in% method) {
 		b <- rr(xtrain, ytrain, r)$coef
-		err[["rr"]][k,] <- if (nr == 1) {
-			errfun(b) } else apply(b, 3, errfun)
+		errk <- apply(b, 3, errfun)
+		if (length(errk) < nr) {
+			nrk <- length(errk)
+			errk <- c(errk, rep(errk[nrk], nr - nrk))
+		}
+		err[["rr"]][k,] <- errk
+		# err[["rr"]][k,] <- if (nr == 1) {
+			# errfun(b) } else apply(b, 3, errfun)
 	}
 	if ("ridge" %in% method) {
 		b <- ridge(xtrain, ytrain, lambda)$coef
-		err[["ridge"]][k,] <- if (nlam == 1) {
-			errfun(b) } else apply(b, 3, errfun)
+		# err[["ridge"]][k,] <- if (nlam == 1) {
+			# errfun(b) } else apply(b, 3, errfun)
+		errk <- apply(b, 3, errfun)
+		if (length(errk) < nr) {
+			nrk <- length(errk)
+			errk <- c(errk, rep(errk[nrk], nr - nrk))
+		}
+		err[["ridge"]][k,] <- errk
 	}
 	if ("pls" %in% method) {
 		b <- pls(xtrain, ytrain, r)$coef
-		err[["pls"]][k,] <- if (nr == 1) {
-			errfun(b) } else apply(b, 3, errfun)
+		errk <- apply(b, 3, errfun)
+		if (length(errk) < nr) {
+			nrk <- length(errk)
+			errk <- c(errk, rep(errk[nrk], nr - nrk))
+		}
+		err[["pls"]][k,] <- errk
+		# err[["pls"]][k,] <- if (nr == 1) {
+			# errfun(b) } else apply(b, 3, errfun)
 	}
 	if ("pcr" %in% method) {
 		b <- pcr(xtrain, ytrain, rpcr)$coef
-		err[["pcr"]][k,] <- if (nrpcr == 1) {
-			errfun(b) } else apply(b, 3, errfun)
+		errk <- apply(b, 3, errfun)
+		if (length(errk) < nrpcr) {
+			nrk <- length(errk)
+			errk <- c(errk, rep(errk[nrk], nrpcr - nrk))
+		}
+		err[["pcr"]][k,] <- errk
+		# err[["pcr"]][k,] <- if (nrpcr == 1) {
+			# errfun(b) } else apply(b, 3, errfun)
 	}		
 }
 
@@ -81,7 +111,8 @@ for (k in 1: nfolds) {
 ape <- lapply(err, function(x) colSums(x) / length(y))
 
 ## Best parameter(s)
-pars <- list()
+pars <- vector("list", length(method))
+names(pars) <- method
 idx <- sapply(ape, which.min)
 if ("rrr" %in% method) {
 	idx1 <- arrayInd(idx["rrr"], c(nlam, nr))
@@ -91,7 +122,6 @@ if ("rr" %in% method) pars$rr <- c(r = r[idx["rr"]])
 if ("ridge" %in% method) pars$ridge <- c(lambda = lambda[idx["ridge"]])
 if ("pls" %in% method) pars$pls <- c(r = r[idx["pls"]])
 if ("pcr" %in% method) pars$pcr <- c(r = rpcr[idx["pcr"]])
-pars <- pars[method]
 
 list(error = ape, pars = pars, lambda = lambda, r = r)
 }
